@@ -1,23 +1,32 @@
-import logo from './logo.svg';
+import { useState, useEffect } from 'react';
+import axios from "axios";
 import './App.css';
 
 function App() {
+  const [dados, setDados] = useState([]);
+
+  const buscarDados = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/dados");
+      setDados(response.data);
+    } catch (error) {
+      console.error(`Erro ao buscar dados: ${error}`);
+    }
+  };
+
+  useEffect(() => {
+    buscarDados(); // Buscar dados quando o componente for montado
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Dados guardados no firebase</h1>
+      <ul>
+        {dados.map(dado => (
+          <li key={dado.id}>{dado.nome} - {dado.idade}</li>
+        ))}
+      </ul>
+      <button onClick={buscarDados}>Buscar dados</button>
     </div>
   );
 }
